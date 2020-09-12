@@ -39,24 +39,6 @@ class State:
         return hash(self.shortname)
 
 
-class Name:
-    def __init__(self, raw):
-        full = raw.split("aka")[0]
-        parts = full.split()
-        self.first = parts[0]
-        self.last = parts[-1]
-        if "Jr" in self.last:
-            self.last = f"{parts[-2]} {self.last}"
-        middle_parts = []
-        for part in parts[1:-1]:
-            if part[0] != "\"":
-                middle_parts.append(part)
-        self.middle = " ".join(middle_parts)
-
-    def __str__(self):
-        return f"{self.first} {self.middle} {self.last}"
-
-
 class Position:
     def __init__(self, lat, long):
         self.lat = lat
@@ -64,11 +46,8 @@ class Position:
     
 
 def adapt_position(position):
-    # lat = adapt(position.lat).getquoted()
-    # long = adapt(position.long).getquoted()
     lat = position.lat
     long = position.long
-    # (long, lat) format per Postgres
     return AsIs("'(%s, %s)'" % (long, lat))
 
 def main():
@@ -180,7 +159,7 @@ def main():
             raw = val(1)
             if raw == "Name withheld by police":
                 return None
-            return Name(raw)
+            return simplify_name(raw)
 
         def is_male():
             return val(3) == "Male"
@@ -279,9 +258,7 @@ def add_to_database(info):
     query = """
         INSERT INTO incident (
             id,
-            first_name,
-            middle_name,
-            last_name,
+            name,
             age,
             is_male,
             race,
@@ -312,15 +289,9 @@ def add_to_database(info):
 
 
 def person_to_row(person):
-    name = person["name"]
-    first = name.first if name is not None else None
-    middle = name.middle if name is not None else None
-    last = name.last if name is not None else None
     return (
         person["id"],
-        first,
-        middle,
-        last,
+        person["name"],
         person["age"],
         person["is_male"],
         person["race"],
@@ -340,6 +311,12 @@ def person_to_row(person):
         person["article_url"],
         person["video_url"],
     )
+
+
+def simplify_name(raw):
+    full = raw.split(" aka")[0]
+    parts = [part for part in full.split() if part[0] != "\""]
+    return " ".join(parts)
 
 
 main()
