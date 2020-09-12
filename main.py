@@ -239,7 +239,7 @@ def add_to_database(info):
     cur = conn.cursor()
 
     cur.execute("DELETE FROM state")
-    values = [(id, list(state.shortname), state.name)
+    values = [(id, state.shortname, state.name)
               for state, id in info["states"].items()]
     query = "INSERT INTO state (id, shortname, name) VALUES %s"
     execute_values(cur, query, values)
@@ -270,7 +270,8 @@ def add_to_database(info):
             city,
             zipcode,
             county,
-            coordinate,
+            latitude,
+            longitude,
             agency,
             cause,
             description,
@@ -303,7 +304,8 @@ def person_to_row(person):
         person["city"],
         person["zipcode"],
         person["county"],
-        person["coordinate"],
+        person["coordinate"].lat,
+        person["coordinate"].long,
         person["agency"],
         person["cause"],
         person["description"],
