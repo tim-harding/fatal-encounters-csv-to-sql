@@ -181,6 +181,8 @@ def main():
 
         def city():
             name = val(10)
+            if name == "":
+                return None
             state_shortname = val(11)
             state_id = states[State(state_shortname, "")]
             city = City(name, state_id)
