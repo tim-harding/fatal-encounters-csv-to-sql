@@ -181,6 +181,7 @@ def main():
 
         def city():
             name = val(10)
+            name = name.strip()
             if name == "":
                 return None
             state_shortname = val(11)
