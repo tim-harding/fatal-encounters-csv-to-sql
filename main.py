@@ -250,7 +250,7 @@ def add_to_database(info):
     cur.execute("DELETE FROM city")
     values = [(id, city.name, city.state_id)
               for city, id in info["cities"].items()]
-    query = "INSERT INTO city (id, name, state) VALUES %s"
+    query = "INSERT INTO city (id, name, state_id) VALUES %s"
     execute_values(cur, query, values)
 
     for table, rows in info["tables"].items():
@@ -264,21 +264,21 @@ def add_to_database(info):
             name,
             age,
             is_male,
-            race,
-            race_with_imputations,
+            race_id,
+            race_with_imputations_id,
             imputation_probability,
             image_url,
             date,
             address,
-            city,
+            city_id,
             zipcode,
-            county,
+            county_id,
             latitude,
             longitude,
-            agency,
-            cause,
+            agency_id,
+            cause_id,
             description,
-            use_of_force,
+            use_of_force_id,
             article_url,
             video_url
         ) VALUES %s
